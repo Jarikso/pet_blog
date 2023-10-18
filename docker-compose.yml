@@ -1,0 +1,36 @@
+version: '1'
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/:/var/lib/postgresql/data
+
+  api:
+    image: api
+    build:
+      context: app
+    container_name: api
+    stop_signal: SIGKILL
+    ports:
+      - "8000:8000"
+    restart: on-failure
+    depends_on:
+      - postgres
+    volumes:
+      - ./app:/blog/app
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx:/etc/nginx/nginx:ro
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+volumes:
+  pgdata:

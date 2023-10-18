@@ -1,0 +1,171 @@
+{
+  "definitions": {
+    "User": {
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "integer"
+        },
+        "token": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "type": "object"
+    },
+    "Note": {
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "integer"
+        },
+        "content": {
+          "type": "string"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "user_id": {
+          "type": "integer"
+        },
+        "image": {
+          "$ref": "#/definitions/Image"
+        },
+        "image_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "type": "object"
+    },
+    "Image": {
+      "properties": {
+          "id": {
+          "readOnly": true,
+          "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "Like": {
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "integer"
+        },
+        "user_id": {
+          "type": "integer"
+        },
+        "note_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  "info": {
+    "title": "Tweet_api",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/users/me": {
+      "get": {
+        "parameters":[{"in": "header","name": "api-key", "type": "string"}],
+        "responses": {"200": {"description": "Get person data", "schema": {"$ref": "#/definitions/User"}}},
+        "summary": "This endpoint to get the user",
+        "tags": ["user"]
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "path","name": "id", "type": "integer",
+          "required": true
+        }],
+        "responses": {"200": {"description": "Get data of other users", "schema": {"$ref": "#/definitions/User"}}},
+        "summary": "This endpoint to get data of other users",
+        "tags": ["user"]
+      }
+    },
+    "/api/users/{id}/follow": {
+      "post": {
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "path", "name": "id", "type": "integer",
+          "required": true
+        }],
+        "responses": {"201": {"description": "Add follower for use", "schema": {"$ref": "#/definitions/User"}}},
+        "summary": "This endpoint to add follower for user",
+        "tags": ["user"]
+      },
+      "delete": {
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "path", "name": "id", "type": "integer",
+          "required": true
+        }],
+        "responses": {"201": {"description": "Delete follower for use", "schema": {"$ref": "#/definitions/User"}}},
+        "summary": "This endpoint to delete follower for user",
+        "tags": ["user"]
+      }
+    },
+    "/api/tweets": {
+      "get": {
+        "responses": {"200": {"description": "Tweets data", "schema": {"items": {"$ref": "#/definitions/Note"}, "type": "array"}}},
+        "summary": "This is an endpoint for obtaining the tweets list.",
+        "tags": ["tweets"]
+      },
+      "post": {
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "body", "name": "content",
+          "schema": {
+            "$ref": "#/definitions/Note"
+          }
+        }],
+        "responses": {"200": {"description": "Add tweet for note"}},
+        "summary": "This endpoint to add tweet for note",
+        "tags": ["tweets"]
+      }
+    },
+    "/api/tweets/{id}": {
+      "delete": {
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "path", "name": "id", "type": "integer",
+          "required": true
+        }],
+        "responses": {"200": {"description": "Delete tweet"}},
+        "summary": "This endpoint to delete tweet in list",
+        "tags": ["tweets"]
+      }
+    },
+    "/api/medias": {
+      "post": {
+        "consumes": "multipart/form-data",
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "formData", "name": "file", "type": "file", "required": false}],
+        "responses": {"200": {"description": "Add image for tweet"}},
+        "summary": "This endpoint to add image for tweet",
+        "tags": ["tweets"]
+      }
+    },
+    "/api/tweets/{id}/likes": {
+      "post": {
+        "parameters":[{"in": "header", "name": "api-key", "type": "string"}, {"in": "path", "name": "id", "type": "integer",
+          "required": true
+        }],
+        "responses": {"201": {"description": "Add like for note", "schema": {"$ref": "#/definitions/User"}}},
+        "summary": "This endpoint to add like for note",
+        "tags": ["tweets"]
+      }
+    }
+  },
+  "swagger": "2.0"
+}
